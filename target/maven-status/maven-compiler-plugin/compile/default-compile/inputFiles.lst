@@ -1,0 +1,8 @@
+/Users/dragosbaci/Desktop/employeeManagement 2/src/main/java/employeeManagementFinal/employeeManagement/EmployeeManagementApplication.java
+/Users/dragosbaci/Desktop/employeeManagement 2/src/main/java/employeeManagementFinal/employeeManagement/repository/DepartmentRepository.java
+/Users/dragosbaci/Desktop/employeeManagement 2/src/main/java/employeeManagementFinal/employeeManagement/entity/Department.java
+/Users/dragosbaci/Desktop/employeeManagement 2/src/main/java/employeeManagementFinal/employeeManagement/entity/Employee.java
+/Users/dragosbaci/Desktop/employeeManagement 2/src/main/java/employeeManagementFinal/employeeManagement/repository/EmployeeRepository.java
+/Users/dragosbaci/Desktop/employeeManagement 2/src/main/java/employeeManagementFinal/employeeManagement/config/SecurityConfig.java
+/Users/dragosbaci/Desktop/employeeManagement 2/src/main/java/employeeManagementFinal/employeeManagement/service/EmployeeService.java
+/Users/dragosbaci/Desktop/employeeManagement 2/src/main/java/employeeManagementFinal/employeeManagement/controller/EmployeeController.java
