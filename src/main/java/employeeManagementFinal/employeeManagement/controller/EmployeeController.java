@@ -1,28 +1,44 @@
 package employeeManagementFinal.employeeManagement.controller;
 
+import employeeManagementFinal.employeeManagement.DTO.EmployeeDTO;
 import employeeManagementFinal.employeeManagement.entity.Employee;
 import employeeManagementFinal.employeeManagement.service.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/employee")
 public class EmployeeController {
-    @Autowired
-    private EmployeeService employeeService;
 
-    @GetMapping
-    public ResponseEntity<List<Employee>> getAllEmployees() {
-        return ResponseEntity.ok(employeeService.getAllEmployees());
+    private final EmployeeService employeeService;
+    private final ModelMapper modelMapper;
+
+    public EmployeeController(EmployeeService employeeService,ModelMapper modelMapper){
+        this.employeeService = employeeService;
+        this.modelMapper = modelMapper;
     }
 
+    @GetMapping
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
+        List<EmployeeDTO> employeeDTOs = employeeService.getAllEmployees()
+                .stream()
+                .map(employee -> modelMapper.map(employee, EmployeeDTO.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(employeeDTOs);
+    }
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
-        return ResponseEntity.ok(employeeService.getEmployeeById(id));
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long id) {
+        Employee employee = employeeService.getEmployeeById(id);
+        if (employee == null) {
+            return ResponseEntity.notFound().build();
+        }
+        EmployeeDTO employeeDTO = modelMapper.map(employee,EmployeeDTO.class);
+        return ResponseEntity.ok(employeeDTO);
     }
 
     @PostMapping
@@ -31,8 +47,10 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employee){
-        return ResponseEntity.ok(employeeService.updateEmployee(id,employee));
+    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Long id, @RequestBody Employee employee){
+        employeeService.updateEmployee(id,employee);
+        EmployeeDTO employeeDTO = modelMapper.map(employee,EmployeeDTO.class);
+        return ResponseEntity.ok(employeeDTO);
     }
 
     @DeleteMapping("/{id}")

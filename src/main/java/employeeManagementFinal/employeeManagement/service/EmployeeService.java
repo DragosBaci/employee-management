@@ -3,6 +3,7 @@ package employeeManagementFinal.employeeManagement.service;
 import employeeManagementFinal.employeeManagement.entity.Department;
 import employeeManagementFinal.employeeManagement.entity.Employee;
 import employeeManagementFinal.employeeManagement.repository.EmployeeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,24 @@ public class EmployeeService {
     }
 
     public Employee updateEmployee(Long id, Employee employee) {
-        return employeeRepository.save(employee);
+        Employee existingEmployee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
+
+        if (employee.getDepartment() != null) {
+            existingEmployee.setDepartment(employee.getDepartment());
+        }
+
+        if (employee.getName() != null) {
+            existingEmployee.setName(employee.getName());
+        }
+
+        if (employee.getEmail() != null) {
+            existingEmployee.setEmail(employee.getEmail());
+        }
+
+        return employeeRepository.saveAndFlush(existingEmployee);
     }
+
 
     public void deleteEmployee(Long id) {
         employeeRepository.deleteById(id);

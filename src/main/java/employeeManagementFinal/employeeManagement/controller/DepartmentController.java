@@ -7,11 +7,11 @@ import employeeManagementFinal.employeeManagement.forms.DepartmentForm;
 import employeeManagementFinal.employeeManagement.forms.UserMappper;
 import employeeManagementFinal.employeeManagement.service.DepartmentService;
 import employeeManagementFinal.employeeManagement.service.EmployeeService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,36 +20,34 @@ import java.util.stream.Collectors;
 public class DepartmentController {
     private final DepartmentService departmentService;
     private final EmployeeService employeeService;
+    private final ModelMapper modelMapper;
     @Autowired
-    public DepartmentController(DepartmentService departmentService, EmployeeService employeeService) {
+    public DepartmentController(DepartmentService departmentService, EmployeeService employeeService, ModelMapper modelMapper) {
         this.departmentService = departmentService;
         this.employeeService = employeeService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping
     public ResponseEntity<List<DepartmentDTO>> getAllDepartments() {
         List<Department> departments = departmentService.getAllDepartments();
-        List<DepartmentDTO> departmentDTOs = new ArrayList<>();
-
-        for (Department department : departments) {
-            DepartmentDTO departmentDTO = new DepartmentDTO();
-            departmentDTO.setId(department.getId());
-            departmentDTO.setDescription(department.getDescription());
-
-            List<Long> employeeIds = department.getEmployees().stream()
-                    .map(Employee::getId)
-                    .collect(Collectors.toList());
-            departmentDTO.setEmployeeIds(employeeIds);
-
-            departmentDTOs.add(departmentDTO);
-        }
+        List<DepartmentDTO> departmentDTOs = departments.stream()
+                .map(department -> {
+                    DepartmentDTO departmentDTO = modelMapper.map(department, DepartmentDTO.class);
+                    departmentDTO.setEmployeeIds(modelMapper.map(department, List.class));
+                    return departmentDTO;
+                })
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(departmentDTOs);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Department> getDepartmentById(@PathVariable Long id) {
-        return ResponseEntity.ok(departmentService.getDepartmentById(id));
+    public ResponseEntity<DepartmentDTO> getDepartmentById(@PathVariable Long id) {
+        Department department = departmentService.getDepartmentById(id);
+        DepartmentDTO departmentDTO = modelMapper.map(department, DepartmentDTO.class);
+        departmentDTO.setEmployeeIds(modelMapper.map(department, List.class));
+        return ResponseEntity.ok(departmentDTO);
     }
 
     @PostMapping
@@ -59,8 +57,8 @@ public class DepartmentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Department> updateDepartment(@PathVariable Long id, @RequestBody Department department) {
-        return ResponseEntity.ok(departmentService.updateDepartment(id,department));
+    public void updateDepartment(@PathVariable Long id, @RequestBody Department department) {
+        departmentService.updateDepartment(id,department);
     }
 
     @DeleteMapping("/{id}")

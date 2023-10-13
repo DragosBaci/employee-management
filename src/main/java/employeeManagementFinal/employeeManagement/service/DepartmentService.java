@@ -2,6 +2,7 @@ package employeeManagementFinal.employeeManagement.service;
 
 import employeeManagementFinal.employeeManagement.entity.Department;
 import employeeManagementFinal.employeeManagement.repository.DepartmentRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,11 @@ public class DepartmentService {
 
     public Department getDepartmentById(Long id) { return departmentRepository.getReferenceById(id); }
 
-    public Department updateDepartment(Long id, Department department) {
-        return departmentRepository.saveAndFlush(department);
+    public void updateDepartment(Long id, Department department) {
+        Department existingDepartment = departmentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Department not found"));
+        existingDepartment.setDescription(department.getDescription());
+         departmentRepository.saveAndFlush(existingDepartment);
     }
 
     public void deleteDepartment(Long id) { departmentRepository.deleteById(id);}
