@@ -7,6 +7,8 @@ import employeeManagementFinal.employeeManagement.forms.DepartmentForm;
 import employeeManagementFinal.employeeManagement.forms.UserMappper;
 import employeeManagementFinal.employeeManagement.service.DepartmentService;
 import employeeManagementFinal.employeeManagement.service.EmployeeService;
+import employeeManagementFinal.employeeManagement.service.Impl.DepartmentServiceImpl;
+import employeeManagementFinal.employeeManagement.service.Impl.EmployeeServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
