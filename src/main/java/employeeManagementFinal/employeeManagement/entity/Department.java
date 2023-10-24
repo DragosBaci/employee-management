@@ -3,11 +3,11 @@ package employeeManagementFinal.employeeManagement.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "department")
-@ToString
 @AllArgsConstructor
 @Getter
 @Setter
@@ -15,20 +15,21 @@ import java.util.List;
 public class Department {
 
     @Id
-    @GeneratedValue
-    @Column(name = "department_id")
-    private Long departmentId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
+    private Long id;
 
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "parent_department_id")
-    private Department parentDepartment;
-
     @OneToMany(mappedBy = "department")
-    private List<Employee> employees;
+    private List<Employee> employees = new ArrayList<>();
 
-    @OneToMany(mappedBy = "parentDepartment")
-    private List<Department> subDepartments;
-
+    @Override
+    public String toString() {
+        return "Department{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", employees=" + employees +
+                '}';
+    }
 }
