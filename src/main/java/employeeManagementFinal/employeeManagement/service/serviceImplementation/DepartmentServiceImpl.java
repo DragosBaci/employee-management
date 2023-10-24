@@ -28,6 +28,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void deleteDepartment(Long id) { departmentRepository.deleteById(id);}
 
     public List<Department> getAllDepartments() { return departmentRepository.findAll();}
+
+    public List<Department> getAllSubdepartments(Long parentDepartmentId) { return departmentRepository.findByParentDepartmentId(parentDepartmentId);}
 }
 
 

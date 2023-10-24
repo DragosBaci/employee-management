@@ -1,20 +1,17 @@
 package employeeManagementFinal.employeeManagement.DTO;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
-@Data
-@Getter
 @Setter
-public class DepartmentDTO {
+@Getter
+public class SubdepartmentDTO {
 
     private Long id;
     private String description;
     private List<Long> employeeIds;
     private Long parentDepartmentId;
-    private List<Long> subdepartmentIds;
-
 }
+

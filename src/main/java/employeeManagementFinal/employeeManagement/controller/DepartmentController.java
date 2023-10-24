@@ -3,8 +3,6 @@ package employeeManagementFinal.employeeManagement.controller;
 import employeeManagementFinal.employeeManagement.DTO.DepartmentDTO;
 import employeeManagementFinal.employeeManagement.entity.Department;
 import employeeManagementFinal.employeeManagement.entity.Employee;
-import employeeManagementFinal.employeeManagement.forms.DepartmentForm;
-import employeeManagementFinal.employeeManagement.forms.UserMappper;
 import employeeManagementFinal.employeeManagement.service.DepartmentService;
 import employeeManagementFinal.employeeManagement.service.EmployeeService;
 import org.modelmapper.ModelMapper;
@@ -32,14 +30,22 @@ public class DepartmentController {
     public ResponseEntity<List<DepartmentDTO>> getAllDepartments() {
         List<Department> departments = departmentService.getAllDepartments();
         List<DepartmentDTO> departmentDTOs = departments.stream()
-                .map(department -> {
-                    DepartmentDTO departmentDTO = modelMapper.map(department, DepartmentDTO.class);
-                    departmentDTO.setEmployeeIds(modelMapper.map(department, List.class));
-                    return departmentDTO;
-                })
+                .map(this::mapDepartmentToDTO)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(departmentDTOs);
+    }
+    private DepartmentDTO mapDepartmentToDTO(Department department) {
+        DepartmentDTO departmentDTO = modelMapper.map(department, DepartmentDTO.class);
+        departmentDTO.setEmployeeIds(department.getEmployees().stream()
+                .map(Employee::getId)
+                .collect(Collectors.toList()));
+
+        departmentDTO.setSubdepartmentIds(department.getSubdepartments().stream()
+                .map(Department::getId)
+                .collect(Collectors.toList()));
+
+        return departmentDTO;
     }
 
     @GetMapping("/{id}")
@@ -51,8 +57,8 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public ResponseEntity<Department> createDepartment(@RequestBody DepartmentForm departmentForm) {
-        Department department = UserMappper.toUser(departmentForm);
+    public ResponseEntity<Department> createDepartment(@RequestBody Department department) {
+         departmentService.saveDepartment(department);
         return ResponseEntity.ok(departmentService.saveDepartment(department));
     }
 
@@ -100,4 +106,52 @@ public class DepartmentController {
             return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
         }
     }
+    @PutMapping("subdepartment/{departmentId}/{subdepartmentId}")
+    public ResponseEntity<Object> addSubdepartmentToDepartment(@PathVariable Long departmentId, @PathVariable Long subdepartmentId) {
+        try {
+            Department department = departmentService.getDepartmentById(departmentId);
+            Department subdepartment = departmentService.getDepartmentById(subdepartmentId);
+
+            if(department == null || subdepartment == null) {
+                return ResponseEntity.badRequest().body("Department or subdepartment not found");
+            }
+            department.getSubdepartments().add(subdepartment);
+            departmentService.saveDepartment(department);
+
+            subdepartment.setParentDepartment(department);
+            departmentService.saveDepartment(subdepartment);
+
+            return ResponseEntity.ok("Subdepartment added to department successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("subdepartment/{parentDepartmentId}")
+    public ResponseEntity<List<DepartmentDTO>> getAllSubdepartments(@PathVariable Long parentDepartmentId) {
+        List<Department> subdepartments = departmentService.getAllSubdepartments(parentDepartmentId);
+
+        List<DepartmentDTO> subdepartmentDTOs = subdepartments.stream()
+                .map(this::mapDepartmentToSubdepartmentDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(subdepartmentDTOs);
+    }
+
+    private DepartmentDTO mapDepartmentToSubdepartmentDTO(Department department) {
+        DepartmentDTO subdepartmentDTO = new DepartmentDTO();
+        subdepartmentDTO.setId(department.getId());
+        subdepartmentDTO.setDescription(department.getDescription());
+        subdepartmentDTO.setParentDepartmentId(department.getParentDepartment().getId());
+        subdepartmentDTO.setEmployeeIds(department.getEmployees().stream()
+                .map(Employee::getId)
+                .collect(Collectors.toList()));
+        subdepartmentDTO.setSubdepartmentIds(department.getSubdepartments().stream()
+                .map(Department::getId)
+                .collect(Collectors.toList()));
+
+        return subdepartmentDTO;
+    }
+
+
 }

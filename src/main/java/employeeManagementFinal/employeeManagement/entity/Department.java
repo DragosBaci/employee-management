@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class Department {
 
     @Id
@@ -24,12 +25,11 @@ public class Department {
     @OneToMany(mappedBy = "department")
     private List<Employee> employees = new ArrayList<>();
 
-    @Override
-    public String toString() {
-        return "Department{" +
-                "id=" + id +
-                ", description='" + description + '\'' +
-                ", employees=" + employees +
-                '}';
-    }
+    @ManyToOne
+    @JoinColumn(name = "parent_department_id")
+    private Department parentDepartment;
+
+    @OneToMany(mappedBy = "parentDepartment")
+    private List<Department> subdepartments = new ArrayList<>();
+
 }
