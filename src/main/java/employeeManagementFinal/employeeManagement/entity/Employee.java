@@ -3,6 +3,9 @@ package employeeManagementFinal.employeeManagement.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "employee")
 
@@ -10,6 +13,7 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class Employee {
 
     @Id
@@ -24,13 +28,10 @@ public class Employee {
     @JoinColumn(name = "department_id",  referencedColumnName = "id", foreignKey = @ForeignKey(name = "departmentKey"))
     private Department department;
 
-    @Override
-    public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", department=" + (department != null ? department.getId() : null) + // Reference the department's ID
-                '}';
-    }
+    @ManyToOne
+    @JoinColumn(name = "manager_id")
+    private Employee manager;
+
+    @OneToMany(mappedBy = "manager")
+    private List<Employee> employees = new ArrayList<>();
 }

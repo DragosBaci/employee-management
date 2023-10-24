@@ -57,6 +57,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<Employee> getEmployeesByDepartment(Department department) {
         return employeeRepository.findByDepartment(department);
     }
+
+    public List<Employee> getAllSubordinates(Long managerId) { return employeeRepository.findByManagerId(managerId);}
 }
 
 

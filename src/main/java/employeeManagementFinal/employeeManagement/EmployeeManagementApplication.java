@@ -1,6 +1,7 @@
 package employeeManagementFinal.employeeManagement;
 
 import employeeManagementFinal.employeeManagement.converters.EmployeeIdListConverter;
+import employeeManagementFinal.employeeManagement.converters.SubDepartmentIdListConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +14,7 @@ public class EmployeeManagementApplication {
 	public ModelMapper modelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new EmployeeIdListConverter());
+		modelMapper.addConverter(new SubDepartmentIdListConverter());
 		return modelMapper;
 	}
 	public static void main(String[] args) {
