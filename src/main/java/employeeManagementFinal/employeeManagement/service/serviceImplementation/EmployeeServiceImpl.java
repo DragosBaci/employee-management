@@ -1,4 +1,4 @@
-package employeeManagementFinal.employeeManagement.service.Impl;
+package employeeManagementFinal.employeeManagement.service.serviceImplementation;
 
 import employeeManagementFinal.employeeManagement.entity.Department;
 import employeeManagementFinal.employeeManagement.entity.Employee;

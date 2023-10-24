@@ -4,6 +4,7 @@ import employeeManagementFinal.employeeManagement.DAO.request.SignInRequest;
 import employeeManagementFinal.employeeManagement.DAO.request.SignUpRequest;
 import employeeManagementFinal.employeeManagement.DAO.response.JwtAuthenticationResponse;
 import employeeManagementFinal.employeeManagement.service.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +27,10 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.signin(request));
     }
 
-
+    @PostMapping("/logout")
+    public void signout(HttpServletRequest request) {
+        authenticationService.signout(request);
+    }
 }
 
 

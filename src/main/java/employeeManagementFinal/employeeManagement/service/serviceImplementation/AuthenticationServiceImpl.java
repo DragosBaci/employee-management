@@ -1,4 +1,4 @@
-package employeeManagementFinal.employeeManagement.service.Impl;
+package employeeManagementFinal.employeeManagement.service.serviceImplementation;
 
 import employeeManagementFinal.employeeManagement.DAO.request.SignInRequest;
 import employeeManagementFinal.employeeManagement.DAO.request.SignUpRequest;
@@ -8,9 +8,11 @@ import employeeManagementFinal.employeeManagement.entity.User;
 import employeeManagementFinal.employeeManagement.repository.UserRepository;
 import employeeManagementFinal.employeeManagement.service.AuthenticationService;
 import employeeManagementFinal.employeeManagement.service.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,4 +42,30 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var jwt = jwtService.generateToken(user);
         return JwtAuthenticationResponse.builder().token(jwt).build();
     }
+
+    @Override
+    public void signout(HttpServletRequest request) {
+        String token = extractTokenFromHeader(request);
+
+        if (token != null) {
+
+            jwtService.deleteToken(token);
+        }
+
+        // Optionally, you can also clear the user's authentication
+        SecurityContextHolder.clearContext();
+    }
+
+    private String extractTokenFromHeader(HttpServletRequest request) {
+        // Extract the token from the "Authorization" header
+        String authorizationHeader = request.getHeader("Authorization");
+
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7);
+        }
+
+        return null;
+    }
 }
+
+
