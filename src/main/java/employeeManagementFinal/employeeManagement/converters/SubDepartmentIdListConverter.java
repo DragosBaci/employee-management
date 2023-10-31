@@ -1,6 +1,6 @@
 package employeeManagementFinal.employeeManagement.converters;
 
-import employeeManagementFinal.employeeManagement.entity.Department;
+import employeeManagementFinal.employeeManagement.model.Department;
 import org.modelmapper.AbstractConverter;
 
 import java.util.List;

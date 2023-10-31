@@ -1,7 +1,7 @@
 package employeeManagementFinal.employeeManagement.repository;
 
-import employeeManagementFinal.employeeManagement.entity.Department;
-import employeeManagementFinal.employeeManagement.entity.Employee;
+import employeeManagementFinal.employeeManagement.model.Department;
+import employeeManagementFinal.employeeManagement.model.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

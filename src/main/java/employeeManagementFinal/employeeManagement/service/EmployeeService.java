@@ -1,7 +1,7 @@
 package employeeManagementFinal.employeeManagement.service;
 
-import employeeManagementFinal.employeeManagement.entity.Department;
-import employeeManagementFinal.employeeManagement.entity.Employee;
+import employeeManagementFinal.employeeManagement.model.Department;
+import employeeManagementFinal.employeeManagement.model.Employee;
 
 import java.util.List;
 

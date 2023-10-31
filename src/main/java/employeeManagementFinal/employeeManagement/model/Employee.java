@@ -1,4 +1,4 @@
-package employeeManagementFinal.employeeManagement.entity;
+package employeeManagementFinal.employeeManagement.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "employee")
+@Table(name = "t_employee")
 
 @AllArgsConstructor
 @Getter
@@ -18,7 +18,6 @@ public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="id", nullable = false)
     private Long id;
 
     private String name;

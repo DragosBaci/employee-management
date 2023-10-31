@@ -1,7 +1,7 @@
 package employeeManagementFinal.employeeManagement.service.serviceImplementation;
 
-import employeeManagementFinal.employeeManagement.entity.Department;
-import employeeManagementFinal.employeeManagement.entity.Employee;
+import employeeManagementFinal.employeeManagement.model.Department;
+import employeeManagementFinal.employeeManagement.model.Employee;
 import employeeManagementFinal.employeeManagement.repository.EmployeeRepository;
 import employeeManagementFinal.employeeManagement.service.EmployeeService;
 import jakarta.persistence.EntityNotFoundException;

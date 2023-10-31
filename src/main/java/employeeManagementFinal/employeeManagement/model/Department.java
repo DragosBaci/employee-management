@@ -1,18 +1,21 @@
-package employeeManagementFinal.employeeManagement.entity;
+package employeeManagementFinal.employeeManagement.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "department")
-@AllArgsConstructor
+@Table(name = "t_department")
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@Builder
 public class Department {
 
     @Id
@@ -25,11 +28,12 @@ public class Department {
     @OneToMany(mappedBy = "department")
     private List<Employee> employees = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "parent_department_id")
+
+    @ManyToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="parentDepartment")
     private Department parentDepartment;
 
-    @OneToMany(mappedBy = "parentDepartment")
-    private List<Department> subdepartments = new ArrayList<>();
+    @OneToMany(mappedBy="parentDepartment")
+    private Set<Department> subdepartments = new HashSet<>();
 
 }
