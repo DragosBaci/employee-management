@@ -102,6 +102,7 @@ public class EmployeeController {
         EmployeeDTO subordinateDTO = new EmployeeDTO();
         subordinateDTO.setId(employee.getId());
         subordinateDTO.setEmail(employee.getEmail());
+        subordinateDTO.setName(employee.getName());
         subordinateDTO.setManagerId(employee.getManager().getId());
         return subordinateDTO;
     }
