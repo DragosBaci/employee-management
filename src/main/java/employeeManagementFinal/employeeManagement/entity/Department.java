@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
+@Builder
 public class Department {
 
     @Id

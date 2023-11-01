@@ -1,15 +1,19 @@
 package employeeManagementFinal.employeeManagement.service;
 
+import employeeManagementFinal.employeeManagement.DTO.DepartmentRequest;
+import employeeManagementFinal.employeeManagement.DTO.DepartmentResponse;
 import employeeManagementFinal.employeeManagement.entity.Department;
 
 import java.util.List;
 
 public interface DepartmentService {
-    Department saveDepartment(Department department);
-    Department getDepartmentById(Long id);
-    void updateDepartment(Long id, Department department);
-    void deleteDepartment(Long id);
-    List<Department> getAllDepartments();
+    void saveDepartment(DepartmentRequest departmentRequest);
 
-    List<Department> getAllSubdepartments(Long parentDepartmentId);
+    List<DepartmentResponse> getAllDepartments();
+    DepartmentResponse getDepartmentById(Long id);
+    void updateDepartment(Long id, DepartmentRequest departmentRequest);
+    void deleteDepartment(Long id);
+
+
+
 }
