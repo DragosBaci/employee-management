@@ -1,6 +1,5 @@
 package employeeManagementFinal.employeeManagement.service.serviceImplementation;
 
-import employeeManagementFinal.employeeManagement.DTO.DepartmentDTO;
 import employeeManagementFinal.employeeManagement.DTO.DepartmentRequest;
 import employeeManagementFinal.employeeManagement.DTO.DepartmentResponse;
 import employeeManagementFinal.employeeManagement.entity.Department;
@@ -9,7 +8,6 @@ import employeeManagementFinal.employeeManagement.repository.DepartmentRepositor
 import employeeManagementFinal.employeeManagement.service.DepartmentService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
