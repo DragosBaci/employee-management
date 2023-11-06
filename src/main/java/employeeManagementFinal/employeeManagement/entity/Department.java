@@ -12,15 +12,15 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
+@Builder
 public class Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
-
     private String description;
+    private String imageUri;
 
     @OneToMany(mappedBy = "department")
     private List<Employee> employees = new ArrayList<>();

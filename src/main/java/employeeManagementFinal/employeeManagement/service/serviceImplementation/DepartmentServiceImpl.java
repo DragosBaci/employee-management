@@ -1,35 +1,102 @@
 package employeeManagementFinal.employeeManagement.service.serviceImplementation;
 
+import employeeManagementFinal.employeeManagement.dto.department.DepartmentRequest;
+import employeeManagementFinal.employeeManagement.dto.department.DepartmentResponse;
+import employeeManagementFinal.employeeManagement.dto.employee.EmployeeResponse;
 import employeeManagementFinal.employeeManagement.entity.Department;
+import employeeManagementFinal.employeeManagement.entity.Employee;
+import employeeManagementFinal.employeeManagement.exception.departmentExceptions.DepartmentCreationException;
+import employeeManagementFinal.employeeManagement.exception.departmentExceptions.DepartmentDeletionException;
+import employeeManagementFinal.employeeManagement.exception.departmentExceptions.DepartmentNotFoundException;
+import employeeManagementFinal.employeeManagement.exception.departmentExceptions.DepartmentUpdateException;
+import employeeManagementFinal.employeeManagement.exception.employeeExceptions.EmployeeNotFoundException;
 import employeeManagementFinal.employeeManagement.repository.DepartmentRepository;
+import employeeManagementFinal.employeeManagement.repository.EmployeeRepository;
 import employeeManagementFinal.employeeManagement.service.DepartmentService;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import employeeManagementFinal.employeeManagement.service.EmployeeService;
+import employeeManagementFinal.employeeManagement.util.DepartmentMapper;
+import employeeManagementFinal.employeeManagement.util.EmployeeMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DepartmentServiceImpl implements DepartmentService {
-    @Autowired
-    public DepartmentRepository departmentRepository;
 
-    public Department saveDepartment(Department department) { return departmentRepository.save(department); }
+    private final DepartmentRepository departmentRepository;
+    private final EmployeeRepository employeeRepository;
 
-    public Department getDepartmentById(Long id) { return departmentRepository.getReferenceById(id); }
-
-    public void updateDepartment(Long id, Department department) {
-        Department existingDepartment = departmentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Department not found"));
-        existingDepartment.setDescription(department.getDescription());
-         departmentRepository.saveAndFlush(existingDepartment);
+    public ResponseEntity<Object> saveDepartment(DepartmentRequest departmentRequest) {
+        try {
+            Department department = Department.builder()
+                    .description(departmentRequest.getDescription())
+                    .imageUri(departmentRequest.getImageUri())
+                    .build();
+            departmentRepository.save(department);
+            return ResponseEntity.ok("Department saved successfully.");
+        } catch (DepartmentCreationException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-    public void deleteDepartment(Long id) { departmentRepository.deleteById(id);}
+    public List<DepartmentResponse> getAllDepartments() {
+        List<Department> departments = departmentRepository.findAll();
+        return departments.stream().map(DepartmentMapper::mapToDepartmentResponse).toList();
+    }
 
-    public List<Department> getAllDepartments() { return departmentRepository.findAll();}
+    public DepartmentResponse getDepartmentById(Long id) {
+        Department department = departmentRepository.findById(id).orElseThrow(() -> new DepartmentNotFoundException(id));
+        return DepartmentMapper.mapToDepartmentResponse(department);
+    }
 
-    public List<Department> getAllSubdepartments(Long parentDepartmentId) { return departmentRepository.findByParentDepartmentId(parentDepartmentId);}
+    public DepartmentResponse updateDepartment(Long id, DepartmentRequest departmentRequest) {
+        Department existingDepartment = departmentRepository.findById(id)
+                .orElseThrow(() -> new DepartmentNotFoundException(id));
+        existingDepartment.setDescription(departmentRequest.getDescription());
+        existingDepartment.setImageUri(departmentRequest.getImageUri());
+        if(existingDepartment.getDescription() != null) {
+            departmentRepository.saveAndFlush(existingDepartment);
+            return DepartmentMapper.mapToDepartmentResponse(existingDepartment);
+        }
+        else {
+            throw new DepartmentUpdateException();
+        }
+    }
+
+    public ResponseEntity<Object> deleteDepartment(Long id) {
+        try{
+            departmentRepository.deleteById(id);
+            return ResponseEntity.ok("Department deleted successfully.");
+        }catch(DepartmentDeletionException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    } // needs to be done
+
+
+    public List<EmployeeResponse> getEmployeesInDepartment(Long departmentId) {
+        Department department = departmentRepository.findById(departmentId).orElseThrow(() -> new DepartmentNotFoundException(departmentId));
+       return department.getEmployees().stream().map(EmployeeMapper::mapToEmployeeResponse).toList();
+    }
+
+    public ResponseEntity<Object> addEmployeeToDepartment(Long employeeId, Long departmentId) {
+        try {
+            Department department = departmentRepository.findById(departmentId).orElseThrow(() -> new DepartmentNotFoundException(departmentId));
+            Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException(employeeId));
+
+            department.getEmployees().add(employee);
+            departmentRepository.saveAndFlush(department);
+
+            employee.setDepartment(department);
+            employeeRepository.saveAndFlush(employee);
+
+            return ResponseEntity.ok("Employee added to the department successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
+        }
+    }
 }
 
 

@@ -1,7 +1,7 @@
 package employeeManagementFinal.employeeManagement.service.serviceImplementation;
 
-import employeeManagementFinal.employeeManagement.DAO.request.SignInRequest;
-import employeeManagementFinal.employeeManagement.DAO.request.SignUpRequest;
+import employeeManagementFinal.employeeManagement.DAO.request.LoginRequest;
+import employeeManagementFinal.employeeManagement.DAO.request.RegisterRequest;
 import employeeManagementFinal.employeeManagement.DAO.response.JwtAuthenticationResponse;
 import employeeManagementFinal.employeeManagement.entity.Role;
 import employeeManagementFinal.employeeManagement.entity.User;
@@ -24,7 +24,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     @Override
-    public JwtAuthenticationResponse signup(SignUpRequest request) {
+    public JwtAuthenticationResponse register(RegisterRequest request) {
         var user = User.builder().firstName(request.getFirstName()).lastName(request.getLastName())
                 .email(request.getEmail()).password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER).build();
@@ -34,7 +34,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public JwtAuthenticationResponse signin(SignInRequest request) {
+    public JwtAuthenticationResponse login(LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         var user = userRepository.findByEmail(request.getEmail())
@@ -44,7 +44,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void signout(HttpServletRequest request) {
+    public void logout(HttpServletRequest request) {
         String token = extractTokenFromHeader(request);
 
         if (token != null) {

@@ -1,64 +1,68 @@
 package employeeManagementFinal.employeeManagement.service.serviceImplementation;
 
-import employeeManagementFinal.employeeManagement.entity.Department;
+import employeeManagementFinal.employeeManagement.dto.employee.EmployeeRequest;
+import employeeManagementFinal.employeeManagement.dto.employee.EmployeeResponse;
 import employeeManagementFinal.employeeManagement.entity.Employee;
+import employeeManagementFinal.employeeManagement.exception.employeeExceptions.EmployeeCreationException;
+import employeeManagementFinal.employeeManagement.exception.employeeExceptions.EmployeeNotFoundException;
+import employeeManagementFinal.employeeManagement.exception.employeeExceptions.EmployeeUpdateException;
 import employeeManagementFinal.employeeManagement.repository.EmployeeRepository;
 import employeeManagementFinal.employeeManagement.service.EmployeeService;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import employeeManagementFinal.employeeManagement.util.EmployeeMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 @Service
+@RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
-    @Autowired
-    public EmployeeRepository employeeRepository;
 
-    public Employee saveEmployee(Employee employee){
-        return employeeRepository.save(employee);
+    private final EmployeeRepository employeeRepository;
+
+    public ResponseEntity<Object> saveEmployee(EmployeeRequest employeeRequest) {
+        try {
+            Employee employee = Employee.builder()
+                    .email(employeeRequest.getEmail())
+                    .name(employeeRequest.getName())
+                    .imageUri(employeeRequest.getImageUri())
+                    .build();
+            employeeRepository.save(employee);
+            return ResponseEntity.ok("Employee saved successfully");
+        } catch (EmployeeCreationException e) {
+            throw new EmployeeCreationException();
+        }
     }
 
-    public List<Employee> saveAllEmployees(List<Employee> employees) { return employeeRepository.saveAll(employees);}
-
-    public Employee getEmployeeById(Long id) {
-        return employeeRepository.getReferenceById(id);
+    public List<EmployeeResponse> getAllEmployees() {
+        List<Employee> employees = employeeRepository.findAll();
+        return employees.stream().map(EmployeeMapper::mapToEmployeeResponse).toList();
     }
 
-    public Employee updateEmployee(Long id, Employee employee) {
+    public EmployeeResponse getEmployeeById(Long id) {
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
+        return EmployeeMapper.mapToEmployeeResponse(employee);
+    }
+
+    public EmployeeResponse updateEmployee(Long id, EmployeeRequest employeeRequest) {
         Employee existingEmployee = employeeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
-
-        if (employee.getDepartment() != null) {
-            existingEmployee.setDepartment(employee.getDepartment());
+                .orElseThrow(() -> new EmployeeNotFoundException(id));
+        existingEmployee.setName(employeeRequest.getName());
+        existingEmployee.setEmail(employeeRequest.getEmail());
+        existingEmployee.setImageUri(employeeRequest.getImageUri());
+        if (existingEmployee.getEmail() != null && existingEmployee.getName() != null) {
+            employeeRepository.saveAndFlush(existingEmployee);
+            return EmployeeMapper.mapToEmployeeResponse(existingEmployee);
+        } else {
+            throw new EmployeeUpdateException();
         }
-
-        if (employee.getName() != null) {
-            existingEmployee.setName(employee.getName());
-        }
-
-        if (employee.getEmail() != null) {
-            existingEmployee.setEmail(employee.getEmail());
-        }
-
-        return employeeRepository.saveAndFlush(existingEmployee);
     }
 
-
-    public void deleteEmployee(Long id) {
+    public ResponseEntity<Object> deleteEmployee(Long id) {
         employeeRepository.deleteById(id);
+        return ResponseEntity.ok("Employee deleted successfully");
     }
-
-    public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
-    }
-
-    public List<Employee> getEmployeesByDepartment(Department department) {
-        return employeeRepository.findByDepartment(department);
-    }
-
-    public List<Employee> getAllSubordinates(Long managerId) { return employeeRepository.findByManagerId(managerId);}
 }
 
 
