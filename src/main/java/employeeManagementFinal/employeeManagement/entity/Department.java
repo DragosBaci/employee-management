@@ -19,8 +19,8 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
-
     private String description;
+    private String imageUri;
 
     @OneToMany(mappedBy = "department")
     private List<Employee> employees = new ArrayList<>();

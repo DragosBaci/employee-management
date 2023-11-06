@@ -1,18 +1,17 @@
 package employeeManagementFinal.employeeManagement.service;
 
+import employeeManagementFinal.employeeManagement.dto.employee.EmployeeRequest;
+import employeeManagementFinal.employeeManagement.dto.employee.EmployeeResponse;
 import employeeManagementFinal.employeeManagement.entity.Department;
 import employeeManagementFinal.employeeManagement.entity.Employee;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface EmployeeService {
-    Employee saveEmployee(Employee employee);
-    List<Employee> saveAllEmployees(List<Employee> employees);
-    Employee getEmployeeById(Long id);
-    Employee updateEmployee(Long id, Employee employee);
-    void deleteEmployee(Long id);
-    List<Employee> getAllEmployees();
-    List<Employee> getEmployeesByDepartment(Department department);
-
-    List<Employee> getAllSubordinates(Long managerId);
+    ResponseEntity<Object> saveEmployee(EmployeeRequest employeeRequest);
+    List<EmployeeResponse> getAllEmployees();
+    EmployeeResponse getEmployeeById(Long id);
+    EmployeeResponse updateEmployee(Long id, EmployeeRequest employeeRequest);
+    ResponseEntity<Object> deleteEmployee(Long id);
 }

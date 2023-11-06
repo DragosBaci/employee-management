@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
+@Builder
 public class Employee {
 
     @Id
@@ -23,6 +23,7 @@ public class Employee {
 
     private String name;
     private String email;
+    private String imageUri;
 
     @ManyToOne
     @JoinColumn(name = "department_id",  referencedColumnName = "id", foreignKey = @ForeignKey(name = "departmentKey"))
@@ -33,5 +34,5 @@ public class Employee {
     private Employee manager;
 
     @OneToMany(mappedBy = "manager")
-    private List<Employee> employees = new ArrayList<>();
+    private List<Employee> subordinates = new ArrayList<>();
 }
