@@ -22,7 +22,7 @@ public class Department {
     private String description;
     private String imageUri;
 
-    @OneToMany(mappedBy = "department")
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
     private List<Employee> employees = new ArrayList<>();
 
     @ManyToOne

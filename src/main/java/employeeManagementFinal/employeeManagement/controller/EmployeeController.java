@@ -2,7 +2,6 @@ package employeeManagementFinal.employeeManagement.controller;
 
 import employeeManagementFinal.employeeManagement.dto.employee.EmployeeRequest;
 import employeeManagementFinal.employeeManagement.dto.employee.EmployeeResponse;
-import employeeManagementFinal.employeeManagement.entity.Employee;
 import employeeManagementFinal.employeeManagement.service.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -47,4 +45,10 @@ public class EmployeeController {
     public ResponseEntity<Object> deleteEmployee(@PathVariable Long id) {
         return ResponseEntity.ok(employeeService.deleteEmployee(id));
    }
+
+    @GetMapping("/in-department/{departmentId}")
+    public ResponseEntity<List<EmployeeResponse>> getAllEmployeesInDepartmentAndSubdepartment(@PathVariable Long departmentId) {
+        List<EmployeeResponse> employees = employeeService.getAllEmployeesInDepartmentAndSubdepartments(departmentId);
+        return ResponseEntity.ok(employees);
+    }
 }

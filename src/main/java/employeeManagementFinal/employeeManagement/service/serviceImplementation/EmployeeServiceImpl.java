@@ -2,6 +2,7 @@ package employeeManagementFinal.employeeManagement.service.serviceImplementation
 
 import employeeManagementFinal.employeeManagement.dto.employee.EmployeeRequest;
 import employeeManagementFinal.employeeManagement.dto.employee.EmployeeResponse;
+import employeeManagementFinal.employeeManagement.entity.Department;
 import employeeManagementFinal.employeeManagement.entity.Employee;
 import employeeManagementFinal.employeeManagement.exception.employeeExceptions.EmployeeCreationException;
 import employeeManagementFinal.employeeManagement.exception.employeeExceptions.EmployeeNotFoundException;
@@ -60,8 +61,26 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     public ResponseEntity<Object> deleteEmployee(Long id) {
-        employeeRepository.deleteById(id);
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
+        Employee manager = employee.getManager();
+
+        if (manager != null) {
+            manager.getSubordinates().remove(employee);
+            employee.setManager(null);
+        }
+
+        for (Employee subordinate : employee.getSubordinates()) {
+            subordinate.setManager(null);
+        }
+
+        employeeRepository.delete(employee);
+
         return ResponseEntity.ok("Employee deleted successfully");
+    }
+
+
+    public List<EmployeeResponse> getAllEmployeesInDepartmentAndSubdepartments(Long departmentId) {
+       return  employeeRepository.findAllEmployeesInDepartmentAndSubdepartments(departmentId).stream().map(EmployeeMapper::mapToEmployeeResponse).toList();
     }
 }
 

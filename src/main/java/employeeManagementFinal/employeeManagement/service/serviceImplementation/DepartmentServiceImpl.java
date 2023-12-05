@@ -67,13 +67,24 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     public ResponseEntity<Object> deleteDepartment(Long id) {
-        try{
-            departmentRepository.deleteById(id);
-            return ResponseEntity.ok("Department deleted successfully.");
-        }catch(DepartmentDeletionException e) {
-            return ResponseEntity.badRequest().build();
+        Department department = departmentRepository.findById(id).orElseThrow(() -> new DepartmentNotFoundException(id));
+
+        for (Employee employee : department.getEmployees()) {
+            employee.setDepartment(null);
         }
-    } // needs to be done
+
+        Department parentDepartment = department.getParentDepartment();
+        if (parentDepartment != null) {
+            parentDepartment.getSubdepartments().remove(department);
+        }
+
+        for (Department subdepartment : department.getSubdepartments()) {
+            subdepartment.setParentDepartment(null);
+        }
+
+        departmentRepository.delete(department);
+        return ResponseEntity.ok("Department deleted successfully.");
+    }
 
 
     public List<EmployeeResponse> getEmployeesInDepartment(Long departmentId) {
